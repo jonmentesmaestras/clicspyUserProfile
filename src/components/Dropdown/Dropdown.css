@@ -1,0 +1,75 @@
+.dropdownWrapper {
+  position: relative;
+}
+
+.dropdownWrapper .userImage img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: auto;
+  object-fit: cover;
+}
+
+.dropdownWrapper .dropdown {
+  background-color: white;
+  padding: 25px;
+  padding-bottom: 23px;
+  max-width: 400px;
+  border-radius: 6px;
+  position: absolute;
+  top: 43px;
+  right: 10px;
+}
+
+.dropdownWrapper .usersSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 25px;
+}
+
+
+.dropdownWrapper .usersSection img {
+  width: 60px;
+  height: 60px;
+  border-radius: 60px;
+  object-fit: cover;
+}
+
+.dropdownWrapper .usersSection .nameEmail {
+  color: rgb(135, 133, 133);
+  text-align: start;
+}
+
+.dropdownWrapper .usersSection .nameEmail h6 {
+  font-size: 18px;
+  font-weight: 350;
+  margin: 0px;
+  padding-bottom: 10px;
+}
+
+.dropdownWrapper .usersSection .nameEmail p {
+  margin: 0px;
+}
+
+.dropdownWrapper .dropdown .dropdownMenu .dropdownItems {
+  padding-left: 17px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.dropdownWrapper .dropdown .dropdownMenu a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding-bottom: 10px;
+  color: rgb(119, 118, 118);
+}
+
+.dropdownWrapper .dropdown .dropdownMenu img {
+  width: 30px !important;
+  text-align: start;
+  padding-right: 10px;
+}

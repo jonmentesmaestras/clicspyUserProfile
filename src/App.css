@@ -1,5 +1,3 @@
-
-
 * {
     box-sizing: border-box;
 }
@@ -8,8 +6,12 @@
     height: 100vh;
 }
 
+button {
+    cursor: pointer;
+}
+
 /* Ejecuta estas condiciones CSS para resoluciones entre 1023 y 1280px*/
-@media screen and (width >= 1280px) {
+@media screen and (width >=1280px) {
 
     :root {
         --button-primary-color-blue: #2196F3;
@@ -19,7 +21,7 @@
     }
 
     .toolbar {
-        width: 100%;
+        /* width: 100%; */
         height: 10%;
         background-color: black;
         color: white;
@@ -128,7 +130,7 @@
     }
 }
 
-@media screen and (720px <= width <= 1279px) {
+@media screen and (720px <=width <=1279px) {
 
     :root {
         --button-primary-color-blue: #2196F3;
@@ -251,7 +253,7 @@
     }
 }
 
-@media screen and (width <= 719px) {
+@media screen and (width <=719px) {
 
     :root {
         --button-primary-color-blue: #2196F3;
@@ -371,7 +373,3 @@
         background: blue;
     }
 }
-
-
-
-

@@ -1,10 +1,12 @@
 import './App.css';
 import Toolbar from "./components/Toolbar";
 import Form from "./views/form/Form";
-import React, {useEffect} from "react";
-import {NAME_HEADER_AUTH, URL_API_USER_TRACK, URL_LOGIN} from "./utils/Constants";
-import {getStoredValue} from "./services/UseLocalStorage";
+import React, { useEffect } from "react";
+import { NAME_HEADER_AUTH, URL_API_USER_TRACK, URL_LOGIN } from "./utils/Constants";
+import { getStoredValue } from "./services/UseLocalStorage";
 import RequestSvc from "./services/RequestSvc";
+import ProfilePage from './views/ProfilePage/ProfilePage';
+import { BrowserRouter } from 'react-router-dom';
 
 async function addTrack() {
     const queryParameters = new URLSearchParams(window.location.search)
@@ -27,8 +29,11 @@ function App() {
     }
     return (
         <div className="main-layout-app">
-            <Toolbar/>
-            {/*<Form/> */}
+            <BrowserRouter>
+                <Toolbar />
+                {/* <Form/> */}
+                <ProfilePage />
+            </BrowserRouter>
         </div>
     );
 }

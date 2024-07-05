@@ -5,69 +5,68 @@
   background-color: #00001b;
   color: #fff;
   height: 66px;
-  
-  
 }
 
 
 .logo {
-  margin-left:61px;
-  height:30px;
+  margin-left: 61px;
+  height: 30px;
+}
+
+.toolbar {
+  display: flex;
+  background: #00001b;
+  /* Toolbar background color */
+  /* padding: 15px;  Toolbar padding */
+  list-style-type: none;
+  /* Remove default list styling */
+  /* width: 14%; */
+  height: 100%;
+  /* margin-left: 1000px; */
+}
+
+.toolbar li {
+  margin-right: 10px;
+  /* Space between icons */
+}
+
+.toolbar a {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  /* Remove default anchor styling */
 }
 
 
-.toolbar {
-    display: flex;
-    background: #00001b; /* Toolbar background color */
-   /* padding: 15px;  Toolbar padding */
-    list-style-type: none; /* Remove default list styling */
-    
-    
-    width: 14%;
-    height: 100%;
-    margin-left:1000px ;
+.button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
 
-    
-  }
-  .toolbar li {
-    margin-right: 10px; /* Space between icons */
-  }
-  .toolbar a {
-    display: inline-block;
-    position: relative;
-    text-decoration: none; /* Remove default anchor styling */
-  }
-  
-
-  .button {
-      background-color:transparent; 
-      border: none; 
-      cursor: pointer;
-  }
-
-  .toolbar-container-buttons-links {
-    /*background-color: #ffffff;*/
-    min-height: 36px;
-    min-width: 36px;
-    /*margin-right: 48px;*/
-    position: absolute;
-    right: 14.1%;
-    justify-content: space-between;
-    /*background-color: #e8dd11;*/
+.toolbar-container-buttons-links {
+  /*background-color: #ffffff;*/
+  min-height: 36px;
+  min-width: 36px;
+  /*margin-right: 48px;*/
+  position: absolute;
+  right: 14.1%;
+  justify-content: space-between;
+  /*background-color: #e8dd11;*/
 }
 
 .toolbar-buttons-links {
-    max-height: 64px;
-    max-width: 64px;
-    margin-right: 8px;
-    /*padding: 4px;*/
-    background-color: transparent;
-    border: none;
-    /*object-fit: scale-down;*/
-    cursor: pointer;
+  max-height: 64px;
+  max-width: 64px;
+  margin-right: 8px;
+  /*padding: 4px;*/
+  background-color: transparent;
+  border: none;
+  /*object-fit: scale-down;*/
+  cursor: pointer;
 }
 
-.toolbar-buttons-links-funnels{
+.toolbar-buttons-links-funnels {
   max-height: 64px;
   max-width: 64px;
   margin-right: 3px;
@@ -79,7 +78,7 @@
 }
 
 
-.toolbar-buttons-links-cademy{
+.toolbar-buttons-links-cademy {
   max-height: 64px;
   max-width: 64px;
   margin-bottom: -2px;
@@ -91,21 +90,21 @@
 
 
 .toolbar-buttons-links-active {
-    height: 48px;
-    width: 48px;
-    /*max-width: 48px;*/
-    /*margin-right: 8px;*/
-    background-color: #1e1e1e;
-    /*background-color: greenyellow;*/
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
-    margin-top: -5px;
+  height: 48px;
+  width: 48px;
+  /*max-width: 48px;*/
+  /*margin-right: 8px;*/
+  background-color: #1e1e1e;
+  /*background-color: greenyellow;*/
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-top: -5px;
 }
+
 .toolbar-icons-buttons {
-    max-height: 36px;
-    /*object-fit: scale-down;*/
-    display: block;
-    /*background-color: #e8dd11;*/
+  max-height: 36px;
+  /*object-fit: scale-down;*/
+  display: block;
+  /*background-color: #e8dd11;*/
 }
-  
