@@ -3,6 +3,11 @@
   background-color: #F8F8F8;
 }
 
+.ProfilePage .loadingIndicator {
+  padding: 30px;
+  height: 80vh;
+}
+
 .ProfilePage .inner {
   margin: 30px;
 }
@@ -54,15 +59,35 @@
   object-fit: cover;
 }
 
-.perfilSection .perfilCard .header .firstBtn {
+/* .ProfilePage .uploadBtn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+} */
+
+.ProfilePage #fileInput {
+  display: none;
+}
+
+.perfilSection .perfilCard .header .uploadBtn {
   border: 1px solid #2D7ADD;
+  height: 31px;
+  display: block;
   border-radius: 6px;
   font-size: 11px;
   padding: 8px 35px;
   font-weight: 600;
   color: rgb(74, 74, 183);
   background-color: #E6F7FF;
-  margin-bottom: 20px;
+  max-width: 147px;
+  cursor: pointer;
+  /* margin-bottom: 20px; */
 }
 
 .perfilSection .perfilCard .header .secondBtn {
@@ -73,6 +98,7 @@
   font-weight: 600;
   color: #FF0000;
   background-color: #ffffff;
+  max-width: 147px;
 }
 
 .perfilSection .perfilCard .perfilForm {

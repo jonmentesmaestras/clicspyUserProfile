@@ -3,8 +3,9 @@
  * Clase encargada de realizar las peticiones HTTP
  * @type {RequestSvc}
  */
-const {NAME_HEADER_AUTH} = require("../utils/Constants");
-const {getStoredValue} = require("./UseLocalStorage");
+const { NAME_HEADER_AUTH } = require("../utils/Constants");
+const { getStoredValue } = require("./UseLocalStorage");
+
 module.exports = class RequestSvc {
     /**
      * Hacer una petición de tipo POST
@@ -20,10 +21,11 @@ module.exports = class RequestSvc {
             headers: headersToRequest,
             redirect: 'follow',
             body: JSON.stringify(payload)
-        }
+        };
         let requestResponse = await fetch(endpoint, requestOptions);
         return this.processData(requestResponse);
     }
+
     /**
      * Hacer una petición de tipo GET
      * @param endpoint Endpoint al que se hará la petición
@@ -36,27 +38,51 @@ module.exports = class RequestSvc {
             method: 'GET',
             headers: headersToRequest,
             redirect: 'follow'
-        }
+        };
         let requestResponse = await fetch(endpoint, requestOptions);
         return this.processData(requestResponse);
     }
+
+    /**
+     * Hacer una petición de tipo POST con FormData
+     * @param endpoint Endpoint al que se hará la petición
+     * @param formData FormData que se enviará en la petición
+     * @param header Headers que se desean enviar en la petición
+     * @returns {Promise<{}>}
+     */
+    postFormData = async (endpoint, formData, header = []) => {
+        let headersToRequest = this.createHeaders(header, false); // Don't set Content-Type for FormData
+        const requestOptions = {
+            method: 'POST',
+            headers: headersToRequest,
+            redirect: 'follow',
+            body: formData
+        };
+        let requestResponse = await fetch(endpoint, requestOptions);
+        return this.processData(requestResponse);
+    }
+
     /**
      * Crear los headers para el request
      * @param headers
+     * @param setContentType
      * @returns {*[]}
      */
-    createHeaders = (headers = []) => {
+    createHeaders = (headers = [], setContentType = true) => {
         let headersToRequest = headers;
         if (headers.length === 0) {
             headersToRequest = new Headers();
         }
-        headersToRequest.append("Content-Type", "application/json");
+        if (setContentType) {
+            headersToRequest.append("Content-Type", "application/json");
+        }
         let auth = getStoredValue(NAME_HEADER_AUTH)
         if (auth) {
             headersToRequest.append("Authorization", `Bearer ${auth}`);
         }
         return headersToRequest;
     }
+
     /**
      * Procesar la respuesta de cada petición.
      * @param requestResponse
@@ -82,5 +108,4 @@ module.exports = class RequestSvc {
         }
         return structResponse;
     }
-
 }
