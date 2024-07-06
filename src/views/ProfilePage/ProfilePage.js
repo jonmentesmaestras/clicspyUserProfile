@@ -108,8 +108,8 @@ const ProfilePage = () => {
                         <img src={selectedFile ? URL.createObjectURL(selectedFile) : userProfilePicture ? userProfilePicture : perfilpic} alt="" />
                       </div>
                       <div className="userButtons">
-                        <input type="file" id="fileInput" name="profilePicture" onChange={handleFileChange} />
-                        <label htmlFor="fileInput" className="uploadBtn">Cambiar foto</label>
+                        <input type="file" id="profilePicture" name="profilePicture" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
+                        <label htmlFor="profilePicture" className="uploadBtn">Cambiar foto</label>
                         <br />
                         <button className="secondBtn" onClick={() => setSelectedFile(null)}>Eliminar foto</button>
                       </div>
