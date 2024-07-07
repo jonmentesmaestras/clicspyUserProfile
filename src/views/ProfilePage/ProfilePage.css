@@ -145,6 +145,12 @@
   background-color: #D6D6D6;
 }
 
+.perfilSection .perfilCard .perfilForm .error {
+  display: block;
+  color: red;
+  margin-top: 6px;
+}
+
 .perfilSection .perfilCard .formbtn button {
   background-color: #1990FF;
   color: white;

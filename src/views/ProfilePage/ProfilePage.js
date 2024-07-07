@@ -66,7 +66,8 @@ const ProfilePage = () => {
     }
   };
 
-  const submitProfileHandler = async () => {
+  const submitProfileHandler = async (e) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("profilePicture", selectedFile);
     formData.append("IDPersona", iDPersona);
@@ -87,7 +88,23 @@ const ProfilePage = () => {
     setSelectedFile(e.target.files[0]);
   };
 
-  console.log(userProfileData);
+  const validateText = (text) => {
+    return /^[A-Za-z]+$/.test(text);
+  };
+
+  const handleFirstNameChange = (e) => {
+    const value = e.target.value;
+    if (validateText(value) || value === "") {
+      setFirstName(value);
+    }
+  };
+
+  const handleLastNameChange = (e) => {
+    const value = e.target.value;
+    if (validateText(value) || value === "") {
+      setLastName(value);
+    }
+  };
 
 
   return (
@@ -115,18 +132,19 @@ const ProfilePage = () => {
                       </div>
                     </div>
                     <div className="perfilForm">
-                      <form>
+                      <form onSubmit={submitProfileHandler}>
                         <div className="nameSection">
                           <div className="Name">
                             <label htmlFor="inputFirstname" className="form-label">
                               Nombre
                             </label>
                             <input
+                              required
                               type="text"
                               className="form-control"
                               placeholder="Juan"
                               value={firstName}
-                              onChange={(e) => setFirstName(e.target.value)}
+                              onChange={handleFirstNameChange}
                             />
                           </div>
                           <div className="Name">
@@ -134,11 +152,12 @@ const ProfilePage = () => {
                               Apellido
                             </label>
                             <input
+                              required
                               type="text"
                               className="form-control"
                               placeholder="Londono"
                               value={lastName}
-                              onChange={(e) => setLastName(e.target.value)}
+                              onChange={handleLastNameChange}
                             />
                           </div>
                         </div>
@@ -160,6 +179,7 @@ const ProfilePage = () => {
                             Teléfono móvil
                           </label>
                           <input
+                            required
                             type="number"
                             className="form-control"
                             placeholder="(57) 3252861967"
@@ -167,10 +187,10 @@ const ProfilePage = () => {
                             onChange={(e) => setMobileNumber(e.target.value)}
                           />
                         </div>
+                        <div className="formbtn">
+                          <button type="submit">Guardar información</button>
+                        </div>
                       </form>
-                      <div className="formbtn">
-                        <button onClick={submitProfileHandler} type="submit">Guardar información</button>
-                      </div>
                     </div>
                   </div>
                 </div>
