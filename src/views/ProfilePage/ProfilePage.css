@@ -85,7 +85,7 @@
   font-weight: 600;
   color: rgb(74, 74, 183);
   background-color: #E6F7FF;
-  max-width: 147px;
+  /* max-width: 147px; */
   cursor: pointer;
   /* margin-bottom: 20px; */
 }

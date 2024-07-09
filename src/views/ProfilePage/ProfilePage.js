@@ -7,7 +7,6 @@ import perfilpic from "../../assets/perfilPic.png";
 
 const ProfilePage = () => {
   const [iDPersona, setIDPersona] = useState("");
-  const [userProfileData, setUserProfileData] = useState({});
   const [userProfilePicture, setUserProfilePicture] = useState("");
   const [planData, setPlanData] = useState({});
   const [firstName, setFirstName] = useState("");
@@ -27,13 +26,15 @@ const ProfilePage = () => {
     setLoading(false);
     if (result?.error) {
       alert("No logramos procesar su solicitud");
+    } else {
+      setEmail(result?.data?.Email);
+      setUserProfilePicture(result?.data?.Foto);
+      setFirstName(result?.data?.Nombre);
+      setLastName(result?.data?.Apellido);
+      setMobileNumber(result?.data?.Telefono);
+      setIDPersona(result?.data?.IDPersona);
+      localStorage.setItem("user", JSON.stringify(result?.data));
     }
-    setUserProfileData(result?.data);
-    setUserProfilePicture(result?.data?.Foto);
-    setFirstName(result?.data?.Nombre);
-    setLastName(result?.data?.Apellido);
-    setMobileNumber(result?.data?.Telefono);
-    setIDPersona(result?.data?.IDPersona);
   };
 
   const getPlanData = async () => {
@@ -81,6 +82,7 @@ const ProfilePage = () => {
       alert("No logramos procesar su solicitud");
     } else {
       alert("Sus datos han sido actualizados");
+      getProfileData();
     }
   };
 
