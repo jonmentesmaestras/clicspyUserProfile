@@ -1,62 +1,70 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./Dropdown.css";
-import { Link } from "react-router-dom";
-import messageIcon from "../../assets/message.png";
-import handshakeIcon from "../../assets/handshake.png";
-import logoutIcon from "../../assets/logout.png";
-import userIcon from "../../assets/user.png";
-import userDefaultPic from "../../assets/perfilPic.png";
+import React, { useState, useEffect, useRef } from 'react'
+import './Dropdown.css'
+import { Link } from 'react-router-dom'
+import messageIcon from '../../assets/message.png'
+import handshakeIcon from '../../assets/handshake.png'
+import logoutIcon from '../../assets/logout.png'
+import userIcon from '../../assets/user.png'
+import userDefaultPic from '../../assets/perfilPic.png'
 
 const Dropdown = () => {
-  const getUserFromLS = localStorage.getItem("user");
-  const [showDropDown, setShowDropDown] = useState(false);
-  const [user, setUser] = useState({});
-  const dropdownRef = useRef(null);
+  const [showDropDown, setShowDropDown] = useState(false)
+  const [user, setUser] = useState({})
+  const dropdownRef = useRef(null)
 
   const handleDropDown = () => {
-    setShowDropDown(!showDropDown);
+    setShowDropDown(!showDropDown)
   }
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropDown(false);
+      setShowDropDown(false)
     }
   }
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   useEffect(() => {
-    if (getUserFromLS) {
-      setUser(JSON.parse(getUserFromLS));
+    const updateUserFromLS = () => {
+      const userFromLS = localStorage.getItem('user')
+      if (userFromLS) {
+        setUser(JSON.parse(userFromLS))
+      }
     }
 
-    return () => {
+    updateUserFromLS()
 
-    }
-  }, [getUserFromLS]);
+    // Poll localStorage every 100ms checking if data is changed or not
+    const interval = setInterval(updateUserFromLS, 100)
 
-  console.log(user);
+    return () => clearInterval(interval)
+  }, [])
 
+  console.log(user)
 
   return (
     <div className="dropdownWrapper" ref={dropdownRef}>
       <div className="userImage">
-        <img src={user?.Foto ? user?.Foto : userDefaultPic} alt="" onClick={handleDropDown} />
+        <img
+          src={user?.Foto ? user?.Foto : userDefaultPic}
+          alt=""
+          onClick={handleDropDown}
+        />
       </div>
-      {
-        showDropDown &&
+      {showDropDown && (
         <div className="dropdown">
           <div>
             <div className="usersSection">
               <img src={user?.Foto ? user?.Foto : userDefaultPic} alt="" />
-              {/* <img src={userDefaultPic} alt="" /> */}
               <div className="nameEmail">
-                <h6>{user?.Nombre} {user?.Apellido}</h6>
+                <h6>
+                  {user?.Nombre} {user?.Apellido}
+                </h6>
                 <p>{user?.Email}</p>
               </div>
             </div>
@@ -82,9 +90,9 @@ const Dropdown = () => {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default Dropdown;
+export default Dropdown
