@@ -27,6 +27,8 @@ function App() {
     if (!auth) {
         window.location.href = URL_LOGIN;
     }
+    console.log(getStoredValue(NAME_HEADER_AUTH));
+
     return (
         <div className="main-layout-app">
             <BrowserRouter>

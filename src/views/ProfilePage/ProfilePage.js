@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const getProfileData = async () => {
+  const getProfileData = async (updated) => {
     setLoading(true);
     let svc = new RequestSvc();
     let result = await svc.get(`${BASE_URL_API}userProfile`).catch((err) => console.log(err));
@@ -27,13 +27,16 @@ const ProfilePage = () => {
     if (result?.error) {
       alert("No logramos procesar su solicitud");
     } else {
+      await localStorage.setItem("user", JSON.stringify(result?.data));
       setEmail(result?.data?.Email);
       setUserProfilePicture(result?.data?.Foto);
       setFirstName(result?.data?.Nombre);
       setLastName(result?.data?.Apellido);
       setMobileNumber(result?.data?.Telefono);
       setIDPersona(result?.data?.IDPersona);
-      localStorage.setItem("user", JSON.stringify(result?.data));
+      if (updated === "true") {
+        window.location.reload();
+      }
     }
   };
 
@@ -81,8 +84,8 @@ const ProfilePage = () => {
     if (result.error) {
       alert("No logramos procesar su solicitud");
     } else {
-      alert("Sus datos han sido actualizados");
-      getProfileData();
+      // alert("Sus datos han sido actualizados");
+      getProfileData("true");
     }
   };
 

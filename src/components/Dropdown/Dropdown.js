@@ -6,15 +6,22 @@ import handshakeIcon from "../../assets/handshake.png";
 import logoutIcon from "../../assets/logout.png";
 import userIcon from "../../assets/user.png";
 import userDefaultPic from "../../assets/perfilPic.png";
+import { deleteStoredValue, getStoredValue } from "../../services/UseLocalStorage";
+import { URL_LOGIN } from "../../utils/Constants";
 
 const Dropdown = () => {
-  const getUserFromLS = localStorage.getItem("user");
+  const getUserFromLS = getStoredValue("user");
   const [showDropDown, setShowDropDown] = useState(false);
   const [user, setUser] = useState({});
   const dropdownRef = useRef(null);
 
-  const handleDropDown = () => {
+  const handleDropDown = (text) => {
     setShowDropDown(!showDropDown);
+    if (text === "logout") {
+      deleteStoredValue("T-CS");
+      deleteStoredValue("user");
+      window.location.href = URL_LOGIN;
+    }
   }
 
   const handleClickOutside = (event) => {
@@ -32,15 +39,13 @@ const Dropdown = () => {
 
   useEffect(() => {
     if (getUserFromLS) {
-      setUser(JSON.parse(getUserFromLS));
+      setUser(getUserFromLS);
     }
 
     return () => {
 
     }
-  }, [getUserFromLS]);
-
-  console.log(user);
+  }, []);
 
 
   return (
@@ -74,7 +79,7 @@ const Dropdown = () => {
                   <img src={messageIcon} alt="" />
                   Sugerir una mejora
                 </Link>
-                <Link to="/salir" onClick={handleDropDown}>
+                <Link to="/salir" onClick={() => handleDropDown("logout")}>
                   <img src={logoutIcon} alt="" />
                   Salir
                 </Link>
