@@ -1,6 +1,6 @@
 import './App.css';
 import Toolbar from "./components/Toolbar";
-import { UserProvider } from './UserContext';
+import Form from "./views/form/Form";
 import React, { useEffect } from "react";
 import { NAME_HEADER_AUTH, URL_API_USER_TRACK, URL_LOGIN } from "./utils/Constants";
 import { getStoredValue } from "./services/UseLocalStorage";
@@ -23,24 +23,24 @@ function App() {
     useEffect(() => {
         addTrack()
     }, []);
+
     const auth = getStoredValue(NAME_HEADER_AUTH);
     if (!auth) {
         window.location.href = URL_LOGIN;
     }
+
     return (
-        <UserProvider>
         <div className="main-layout-app">
             <BrowserRouter>
                 <Toolbar />
                 <Routes>
                     <Route path="/profile" element={<ProfilePage />} />
                     {/* Si quieres agregar otras páginas, puedes definir más rutas aquí */}
-                    
+                    <Route path="/form" element={<Form />} />
                     <Route path="*" element={<div>Page Not Found</div>} />
                 </Routes>
             </BrowserRouter>
         </div>
-        </UserProvider>
     );
 }
 

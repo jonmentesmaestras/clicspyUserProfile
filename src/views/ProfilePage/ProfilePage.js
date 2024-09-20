@@ -1,41 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./ProfilePage.css";
 import calendar from "../../assets/calendar.png";
 import { BASE_URL_API } from "../../utils/Constants";
 import RequestSvc from "../../services/RequestSvc";
-import perfilpic from "../../assets/perfilPic.png";
+import perfilpic from "../../assets/avatar.jpg";
+import UserContext from '../../UserContext';
 
-const ProfilePage = () => {
+function getRandomNumber() {
+  return Math.floor(Math.random() * (8000 - 1000 + 1)) + 1000;
+}
+
+const ProfilePage = () => { 
+  
+  const { user, fetchUserData, imageVersion, setImageVersion } = useContext(UserContext);
+
+  
   const [iDPersona, setIDPersona] = useState("");
-  const [userProfilePicture, setUserProfilePicture] = useState("");
   const [planData, setPlanData] = useState({});
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [firstName, setFirstName] = useState(user?.Nombre || "");
+  const [lastName, setLastName] = useState(user?.Apellido || "");
+  const [email, setEmail] = useState(user?.Email || "");
+  const [mobileNumber, setMobileNumber] = useState(user?.Telefono || "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const getProfileData = async () => {
-    setLoading(true);
-    let svc = new RequestSvc();
-    let result = await svc.get(`${BASE_URL_API}userProfile`).catch((err) => console.log(err));
-    setLoading(false);
-    if (result?.error) {
-      alert("No logramos procesar su solicitud");
-    } else {
-      setEmail(result?.data?.Email);
-      setUserProfilePicture(result?.data?.Foto);
-      setFirstName(result?.data?.Nombre);
-      setLastName(result?.data?.Apellido);
-      setMobileNumber(result?.data?.Telefono);
-      setIDPersona(result?.data?.IDPersona);
-      localStorage.setItem("user", JSON.stringify(result?.data));
-    }
-  };
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
@@ -47,9 +37,15 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    getProfileData();
+    if (user) {
+      setEmail(user.Email);
+      setFirstName(user.Nombre);
+      setLastName(user.Apellido);
+      setMobileNumber(user.Telefono);
+      setIDPersona(user.IDPersona);
+    }
     getPlanData();
-  }, []);
+  }, [user]);
 
   const submitPasswordHandler = async (e) => {
     e.preventDefault();
@@ -81,8 +77,12 @@ const ProfilePage = () => {
     if (result.error) {
       alert("No logramos procesar su solicitud");
     } else {
-      alert("Sus datos han sido actualizados");
-      getProfileData();
+      
+      await fetchUserData(); // Refresh user data in context
+      alert("Your data has been updated");
+      
+      // Increment the image version
+      setImageVersion((prevVersion) => prevVersion + getRandomNumber());
     }
   };
 
@@ -117,6 +117,7 @@ const ProfilePage = () => {
           :
           <div className="inner">
             <h3 className="title">Mi cuenta</h3>
+          
             <div className="sectionsContainer">
               <section>
                 <div className="perfilSection">
@@ -124,13 +125,26 @@ const ProfilePage = () => {
                     <h4>Mi perfil</h4>
                     <div className="header">
                       <div className="userImg">
-                        <img src={selectedFile ? URL.createObjectURL(selectedFile) : userProfilePicture ? userProfilePicture : perfilpic} alt="" />
+                      <img
+                        src={
+                          selectedFile
+                            ? URL.createObjectURL(selectedFile)
+                            : user?.Foto 
+                            ? `${user.Foto}?v=${getRandomNumber()}`
+                            : perfilpic
+                        }
+                        alt=""
+                      />
                       </div>
                       <div className="userButtons">
                         <input type="file" id="profilePicture" name="profilePicture" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                        <label htmlFor="profilePicture" className="uploadBtn">Cambiar foto</label>
+                      <label htmlFor="profilePicture" className="uploadBtn">
+                        Cambiar foto
+                      </label>
                         <br />
-                        <button className="secondBtn" onClick={() => setSelectedFile(null)}>Eliminar foto</button>
+                      <button className="secondBtn" onClick={() => setSelectedFile(null)}>
+                        Eliminar foto
+                      </button>
                       </div>
                     </div>
                     <div className="perfilForm">

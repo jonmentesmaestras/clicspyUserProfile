@@ -1,9 +1,7 @@
 import logo from '../assets/logo_clicspy_profile.png';
 import './Toolbar.css'
-import profileImg from '../profile.png'
 import icon_dashboard from '../assets/icon_dashboard.png'
 import icon_funnel from '../assets/icon_funnel.png'
-import icon_ghost from '../assets/icon_ghost.png'
 import icon_cademy from '../assets/icon_cademy.png'
 import { URL_CADEMY, URL_DASHBOARD, URL_FUNNELS } from "../utils/Constants";
 import Dropdown from './Dropdown/Dropdown';
@@ -48,11 +46,6 @@ export default function Toolbar() {
                         <span>Embudos</span>
                     </button>
                 </li>
-                {/* <li>
-                    <button onClick={() => handleClick('')} className="button" title="Ir a Ghost para ocultarme">
-                        <img className="toolbar-icons-buttons" src={icon_ghost} alt="Ghost" />
-                    </button>
-                </li> */}
                 <li>
                     <button onClick={() => handleClick('cademy')} className="button"
                         title="Ir a Cademy para Entrenarme">
