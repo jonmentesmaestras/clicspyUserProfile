@@ -268,3 +268,9 @@
   font-weight: 600;
   margin-top: 165px;
 }
+
+.table-header {
+  font-weight: bold !important;
+  font-size: 21px !important;
+  text-align: center !important;
+}

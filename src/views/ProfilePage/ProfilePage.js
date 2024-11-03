@@ -5,6 +5,24 @@ import { BASE_URL_API } from "../../utils/Constants";
 import RequestSvc from "../../services/RequestSvc";
 import perfilpic from "../../assets/avatar.jpg";
 import UserContext from '../../UserContext';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+  
+  const months = [
+    'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+    'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+  ];
+  const month = months[date.getMonth()];
+  
+  return `${day}-${month}-${year}`;
+};
+
 
 function getRandomNumber() {
   return Math.floor(Math.random() * (8000 - 1000 + 1)) + 1000;
@@ -26,14 +44,26 @@ const ProfilePage = () => {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [features, setFeatures] = useState([]);
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
-    let result = await svc.get(`${BASE_URL_API}userPlan`).catch((err) => console.log(err));
+    let result = await svc.get(`${BASE_URL_API}getFeatures/?UserID=1580&getPlanDetails=true`).catch((err) => console.log(err));
     if (result.error) {
       alert("No logramos procesar su solicitud");
     }
     setPlanData(result.data);
+  };
+
+  const getFeatures = async () => {
+    let svc = new RequestSvc();
+    let result = await svc.get(`${BASE_URL_API}getFeatures/?UserID=1580`).catch((err) => console.log(err));
+    if (result.error) {
+      alert("No logramos procesar su solicitud");
+      setFeatures([]);
+    } else {
+      setFeatures(result.data);
+    }
   };
 
   useEffect(() => {
@@ -43,6 +73,7 @@ const ProfilePage = () => {
       setLastName(user.Apellido);
       setMobileNumber(user.Telefono);
       setIDPersona(user.IDPersona);
+      getFeatures();
     }
     getPlanData();
   }, [user]);
@@ -269,16 +300,61 @@ const ProfilePage = () => {
                     </div>
                   </div>
                   <div className="planDate">
-                    <h6>{planData?.DaysLeft}</h6>
                     <p>
-                      Próximo cobro:
-                      <br />
-                      {planData?.NextDateCharge}
+                      Días para Disfrutar la suscripcion: {planData?.DaysLeft}
+                     
+                    </p>
+                    <p>
+                      Próximo cobro: {formatDate(planData?.NextDateCharge)}
                     </p>
                   </div>
-                  <div className="planBtn">
+                  <div id="features">
+                    <TableContainer component={Paper}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ 
+                              fontSize: '16px',
+                              fontWeight: 'bold'
+                            }}>Poderes</TableCell>
+                            <TableCell sx={{ 
+                              fontSize: '16px',
+                              textAlign: 'center',
+                              fontWeight: 'bold'
+                            }}>Has Usado</TableCell>
+                            <TableCell sx={{ 
+                              fontSize: '16px',
+                              textAlign: 'center',
+                              fontWeight: 'bold'
+                            }}>Límite</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {features.map((feature) => (
+                            <TableRow key={feature.Usuarios_Features_PlanesID}>
+                              <TableCell sx={{ fontSize: '16px' }}>{feature.FK_FeaturePlanCode}</TableCell>
+                              <TableCell sx={{ 
+                                fontSize: '16px',
+                                textAlign: 'center'
+                              }}>{feature.TotalUsed}</TableCell>
+                              <TableCell sx={{ 
+                                fontSize: '16px',
+                                textAlign: 'center'
+                              }}>{feature.Limite}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </div>
+                  <div className="planBtn" style={{ marginTop: '30%' }}>
                     <button className="blue">Cambiar plan</button>
-                    <button className="red">Cancelar suscripción</button>
+                    <button 
+                      className="red" 
+                      onClick={() => window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank')}
+                    >
+                      Cancelar suscripción
+                    </button>
                   </div>
                 </div>
               </section>

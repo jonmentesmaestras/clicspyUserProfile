@@ -5,7 +5,7 @@ const BACKEND_PORT = "3002"
 const PROTOCOL = window.location.protocol;
 export const HOST = PROTOCOL === 'https:' ? `${BASE_URL_API_OPS}` : `${BASE_URL_API_DEV}:${BACKEND_PORT}`;
 //export const BASE_URL_API = `${window.location.protocol}//${HOST}/`;
-export const BASE_URL_API = `https://nodeapi.tueducaciondigital.site/`;
+export const BASE_URL_API = `http://localhost:3002/`;
 export const URL_API_GHOST = `${BASE_URL_API}profile`;
 export const URL_API_USER_TRACK = `${BASE_URL_API}usertrack`;
 export const BASE_URL_FRONT_END = `https://clicspy.com/`;
