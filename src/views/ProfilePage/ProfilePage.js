@@ -6,6 +6,8 @@ import RequestSvc from "../../services/RequestSvc";
 import perfilpic from "../../assets/avatar.jpg";
 import UserContext from '../../UserContext';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -48,7 +50,8 @@ const ProfilePage = () => {
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
-    let result = await svc.get(`${BASE_URL_API}getFeatures/?UserID=1580&getPlanDetails=true`).catch((err) => console.log(err));
+    let result = await svc.get(`${BASE_URL_API}getFeatures/?getPlanDetails=true`).catch((err) => console.log(err));
+    console.log("result is", result)
     if (result.error) {
       alert("No logramos procesar su solicitud");
     }
@@ -57,7 +60,7 @@ const ProfilePage = () => {
 
   const getFeatures = async () => {
     let svc = new RequestSvc();
-    let result = await svc.get(`${BASE_URL_API}getFeatures/?UserID=1580`).catch((err) => console.log(err));
+    let result = await svc.get(`${BASE_URL_API}getFeatures/`).catch((err) => console.log(err));
     if (result.error) {
       alert("No logramos procesar su solicitud");
       setFeatures([]);
@@ -189,7 +192,7 @@ const ProfilePage = () => {
                               required
                               type="text"
                               className="form-control"
-                              placeholder="Juan"
+                              placeholder=""
                               value={firstName}
                               onChange={handleFirstNameChange}
                             />
@@ -202,7 +205,7 @@ const ProfilePage = () => {
                               required
                               type="text"
                               className="form-control"
-                              placeholder="Londono"
+                              placeholder=""
                               value={lastName}
                               onChange={handleLastNameChange}
                             />
@@ -216,7 +219,7 @@ const ProfilePage = () => {
                             disabled
                             type="email"
                             className="form-control"
-                            placeholder="plataformas@gmail.com"
+                            placeholder=""
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                           />
@@ -229,7 +232,7 @@ const ProfilePage = () => {
                             required
                             type="number"
                             className="form-control"
-                            placeholder="(57) 3252861967"
+                            placeholder=""
                             value={mobileNumber}
                             onChange={(e) => setMobileNumber(e.target.value)}
                           />
@@ -327,6 +330,11 @@ const ProfilePage = () => {
                               textAlign: 'center',
                               fontWeight: 'bold'
                             }}>Límite</TableCell>
+                            <TableCell sx={{ 
+                              fontSize: '16px',
+                              textAlign: 'center',
+                              fontWeight: 'bold'
+                            }}>Estado</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
@@ -341,13 +349,34 @@ const ProfilePage = () => {
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>{feature.Limite}</TableCell>
+                              <TableCell sx={{ 
+                                fontSize: '16px',
+                                textAlign: 'center'
+                              }}>
+                                {feature.TotalUsed > feature.Limite ? 
+                                  <BlockIcon color="error" /> : 
+                                  <CheckCircleOutlineIcon color="success" />
+                                }
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
+                    
+                    {features.some(feature => feature.TotalUsed > feature.Limite) && (
+                      <div style={{
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                        color: 'red',
+                        marginTop: '15px',
+                        textAlign: 'center'
+                      }}>
+                        Te recomendamos actualizar tu plan para que sigas espiando, modelando y ganando como un Pro. Clic en el botón de abajo para actualizar tu plan.
+                      </div>
+                    )}
                   </div>
-                  <div className="planBtn" style={{ marginTop: '30%' }}>
+                  <div className="planBtn" style={{ marginTop: '20%' }}>
                     <button className="blue">Cambiar plan</button>
                     <button 
                       className="red" 
