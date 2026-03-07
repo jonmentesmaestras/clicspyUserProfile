@@ -1,0 +1,43 @@
+.dialog-container {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.dialog-container .dialog-title {
+    font-weight: 600;
+    font-size: 20px;
+    color: #000;
+}
+
+.dialog-container .dialog-description {
+    font-weight: 400;
+    font-size: 16px;
+    color: #000;
+}
+
+.dialog-container textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    resize: vertical;
+
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.dialog-container .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0px 24px 20px 24px;
+}

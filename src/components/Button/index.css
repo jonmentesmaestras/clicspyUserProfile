@@ -1,0 +1,111 @@
+:root {
+  --button-color-blue: #0d6efd;
+  --button-hover-color-blue: #0b5ed7;
+  --button-color-red: #dc3545;
+  --button-hover-color-red: #bb2d3b;
+  --button-color-green: #198754;
+  --button-hover-color-green: #157347;
+  --button-color-gray: #6c757d;
+  --button-hover-color-gray: #5c636a;
+
+  --white-color: #fff;
+  --black-color: #000;
+}
+
+button {
+  font-weight: 400;
+  font-size: 16px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-primary {
+  background-color: var(--button-color-blue);
+  color: var(--white-color);
+}
+
+.button-primary:hover {
+  background-color: var(--button-hover-color-blue);
+  color: var(--white-color);
+}
+
+.button-primary-outline {
+  background-color: transparent;
+  color: var(--button-color-blue);
+  border: 1px solid var(--button-color-blue);
+}
+
+.button-primary-outline:hover {
+  background-color: var(--button-color-blue);
+  color: var(--white-color);
+  border: 1px solid var(--button-color-blue);
+}
+
+.button-danger {
+  background-color: var(--button-color-red);
+  color: var(--white-color);
+}
+
+.button-danger:hover {
+  background-color: var(--button-hover-color-red);
+  color: var(--white-color);
+}
+
+.button-danger-outline {
+  background-color: transparent;
+  color: var(--button-color-red);
+  border: 1px solid var(--button-color-red);
+}
+
+.button-danger-outline:hover {
+  background-color: var(--button-color-red);
+  color: var(--white-color);
+  border: 1px solid var(--button-color-red);
+}
+
+.button-success {
+  background-color: var(--button-color-green);
+  color: var(--white-color);
+}
+
+.button-success:hover {
+  background-color: var(--button-hover-color-green);
+  color: var(--white-color);
+}
+
+.button-success-outline {
+  background-color: transparent;
+  color: var(--button-color-green);
+  border: 1px solid var(--button-color-green);
+}
+
+.button-success-outline:hover {
+  background-color: var(--button-color-green);
+  color: var(--white-color);
+  border: 1px solid var(--button-color-green);
+}
+
+.button-secondary {
+  background-color: var(--button-color-gray);
+  color: var(--white-color);
+}
+
+.button-secondary:hover {
+  background-color: var(--button-hover-color-gray);
+  color: var(--white-color);
+}
+
+.button-secondary-outline {
+  background-color: transparent;
+  color: var(--button-color-gray);
+  border: 1px solid var(--button-color-gray);
+}
+
+.button-secondary-outline:hover {
+  background-color: var(--button-color-gray);
+  color: var(--white-color);
+  border: 1px solid var(--button-color-gray);
+}

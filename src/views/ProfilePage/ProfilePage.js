@@ -8,20 +8,21 @@ import UserContext from '../../UserContext';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import Dialog from '../../components/Dialog';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
-  
+
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
   const year = date.getFullYear();
-  
+
   const months = [
     'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
   ];
   const month = months[date.getMonth()];
-  
+
   return `${day}-${month}-${year}`;
 };
 
@@ -30,11 +31,11 @@ function getRandomNumber() {
   return Math.floor(Math.random() * (8000 - 1000 + 1)) + 1000;
 }
 
-const ProfilePage = () => { 
-  
+const ProfilePage = () => {
+
   const { user, fetchUserData, imageVersion, setImageVersion } = useContext(UserContext);
 
-  
+
   const [iDPersona, setIDPersona] = useState("");
   const [planData, setPlanData] = useState({});
   const [firstName, setFirstName] = useState(user?.Nombre || "");
@@ -47,6 +48,8 @@ const ProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [features, setFeatures] = useState([]);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
@@ -111,10 +114,10 @@ const ProfilePage = () => {
     if (result.error) {
       alert("No logramos procesar su solicitud");
     } else {
-      
+
       await fetchUserData(); // Refresh user data in context
       alert("Your data has been updated");
-      
+
       // Increment the image version
       setImageVersion((prevVersion) => prevVersion + getRandomNumber());
     }
@@ -142,6 +145,12 @@ const ProfilePage = () => {
     }
   };
 
+  const handleConfirmCancel = () => {
+    console.log(cancelReason);
+    // window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank');
+    setIsCancelModalOpen(false);
+    // setCancelReason("");
+  };
 
   return (
     <div className="ProfilePage">
@@ -151,7 +160,7 @@ const ProfilePage = () => {
           :
           <div className="inner">
             <h3 className="title">Mi cuenta</h3>
-          
+
             <div className="sectionsContainer">
               <section>
                 <div className="perfilSection">
@@ -159,26 +168,26 @@ const ProfilePage = () => {
                     <h4>Mi perfil</h4>
                     <div className="header">
                       <div className="userImg">
-                      <img
-                        src={
-                          selectedFile
-                            ? URL.createObjectURL(selectedFile)
-                            : user?.Foto 
-                            ? `${user.Foto}?v=${getRandomNumber()}`
-                            : perfilpic
-                        }
-                        alt=""
-                      />
+                        <img
+                          src={
+                            selectedFile
+                              ? URL.createObjectURL(selectedFile)
+                              : user?.Foto
+                                ? `${user.Foto}?v=${getRandomNumber()}`
+                                : perfilpic
+                          }
+                          alt=""
+                        />
                       </div>
                       <div className="userButtons">
                         <input type="file" id="profilePicture" name="profilePicture" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                      <label htmlFor="profilePicture" className="uploadBtn">
-                        Cambiar foto
-                      </label>
+                        <label htmlFor="profilePicture" className="uploadBtn">
+                          Cambiar foto
+                        </label>
                         <br />
-                      <button className="secondBtn" onClick={() => setSelectedFile(null)}>
-                        Eliminar foto
-                      </button>
+                        <button className="secondBtn" onClick={() => setSelectedFile(null)}>
+                          Eliminar foto
+                        </button>
                       </div>
                     </div>
                     <div className="perfilForm">
@@ -305,7 +314,7 @@ const ProfilePage = () => {
                   <div className="planDate">
                     <p>
                       Días para Disfrutar la suscripcion: {planData?.DaysLeft}
-                     
+
                     </p>
                     <p>
                       Próximo cobro: {formatDate(planData?.NextDateCharge)}
@@ -316,21 +325,21 @@ const ProfilePage = () => {
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               fontWeight: 'bold'
                             }}>Poderes</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
                             }}>Has Usado</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
                             }}>Límite</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
@@ -341,20 +350,20 @@ const ProfilePage = () => {
                           {features.map((feature) => (
                             <TableRow key={feature.Usuarios_Features_PlanesID}>
                               <TableCell sx={{ fontSize: '16px' }}>{feature.FK_FeaturePlanCode}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>{feature.TotalUsed}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>{feature.Limite}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>
-                                {feature.TotalUsed > feature.Limite ? 
-                                  <BlockIcon color="error" /> : 
+                                {feature.TotalUsed > feature.Limite ?
+                                  <BlockIcon color="error" /> :
                                   <CheckCircleOutlineIcon color="success" />
                                 }
                               </TableCell>
@@ -363,7 +372,7 @@ const ProfilePage = () => {
                         </TableBody>
                       </Table>
                     </TableContainer>
-                    
+
                     {features.some(feature => feature.TotalUsed > feature.Limite) && (
                       <div style={{
                         fontWeight: 'bold',
@@ -378,9 +387,10 @@ const ProfilePage = () => {
                   </div>
                   <div className="planBtn" style={{ marginTop: '20%' }}>
                     <button className="blue">Cambiar plan</button>
-                    <button 
-                      className="red" 
-                      onClick={() => window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank')}
+                    <button
+                      className="red"
+                      // onClick={() => window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank')}
+                      onClick={() => setIsCancelModalOpen(true)}
                     >
                       Cancelar suscripción
                     </button>
@@ -390,6 +400,27 @@ const ProfilePage = () => {
             </div>
           </div>
       }
+      <Dialog
+        open={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        title="¿Deseas cancelar la suscripción?"
+        description="Lamentamos que quieras cancelar tu suscripción. Por favor, cuéntanos el motivo de tu cancelación:"
+        onConfirm={() => handleConfirmCancel()}
+        confirm={{
+          message: "Cancelar suscripción",
+          type: "danger"
+        }}
+        cancel={{
+          message: "Quedarme aquí",
+          type: "secondary-outline"
+        }}
+      >
+        <textarea
+          placeholder="Escribe aquí..."
+          value={cancelReason}
+          onChange={(e) => setCancelReason(e.target.value)}
+        />
+      </Dialog>
     </div>
   );
 };
