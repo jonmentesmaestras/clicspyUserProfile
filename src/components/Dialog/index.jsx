@@ -1,5 +1,5 @@
 import './index.css';
-import { Dialog as MuiDialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog as MuiDialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress } from '@mui/material';
 import Button from '../Button';
 
 const Dialog = ({
@@ -11,7 +11,8 @@ const Dialog = ({
   onConfirm,
   confirm = { message: "Confirmar", type: "primary", disabled: false },
   cancel = { message: "Cancelar", type: "secondary", disabled: false },
-  disableEscapeKeyDown = false
+  disableEscapeKeyDown = false,
+  loading = { open: false, message: "" }
 }) => {
   return (
     <MuiDialog
@@ -24,18 +25,27 @@ const Dialog = ({
       className="dialog-container"
       disableEscapeKeyDown={disableEscapeKeyDown}
     >
-      {title && (
-        <DialogTitle className="dialog-title">
-          {title}
-        </DialogTitle>
-      )}
       <DialogContent>
-        {description && (
-          <DialogContentText className="dialog-description" sx={{ mb: 2 }}>
-            {description}
-          </DialogContentText>
+        {loading.open ? (
+          <div className="dialog-loading">
+            <CircularProgress />
+            <p style={{ marginTop: '15px', color: '#666', fontWeight: 'bold' }}>{loading.message}</p>
+          </div>
+        ) : (
+          <>
+            {title && (
+              <DialogTitle className="dialog-title">
+                {title}
+              </DialogTitle>
+            )}
+            {description && (
+              <DialogContentText className="dialog-description" sx={{ mb: 2 }}>
+                {description}
+              </DialogContentText>
+            )}
+            {children}
+          </>
         )}
-        {children}
       </DialogContent>
       <DialogActions className="dialog-actions">
         <Button onClick={onClose} type={cancel.type} text={cancel.message} disabled={cancel.disabled} />
