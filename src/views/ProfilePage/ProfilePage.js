@@ -147,10 +147,9 @@ const ProfilePage = () => {
   const sendCancelFeedback = async () => {
     const requestSvc = new RequestSvc();
 
-    // TODO: Cambiar postMock por post, cambiar userFake por user
     return await requestSvc.postMock(URL_API_FEEDBACK, {
-      customer_email: userFake.Email,
-      customer_name: `${userFake.Nombre} ${userFake.Apellido}`,
+      customer_email: user.Email,
+      customer_name: `${user.Nombre} ${user.Apellido}`,
       body_message: cancelReason
     });
   };
@@ -158,7 +157,7 @@ const ProfilePage = () => {
   const processStripeCancellation = async () => {
     // TODO: Cambiar cancelSubscriptionMock por cancelSubscription
     return await StripeSvc.cancelSubscriptionMock(URL_API_STRIPE_CANCEL, {
-      email: userFake?.Email,
+      email: user?.Email,
       cancelImmediately: true,
     });
   };
