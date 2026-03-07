@@ -9,8 +9,9 @@ const Dialog = ({
   description,
   children,
   onConfirm,
-  confirm = { message: "Confirmar", type: "primary" },
-  cancel = { message: "Cancelar", type: "secondary" }
+  confirm = { message: "Confirmar", type: "primary", disabled: false },
+  cancel = { message: "Cancelar", type: "secondary", disabled: false },
+  disableEscapeKeyDown = false
 }) => {
   return (
     <MuiDialog
@@ -21,6 +22,7 @@ const Dialog = ({
       fullWidth
       maxWidth="md"
       className="dialog-container"
+      disableEscapeKeyDown={disableEscapeKeyDown}
     >
       {title && (
         <DialogTitle className="dialog-title">
@@ -36,8 +38,8 @@ const Dialog = ({
         {children}
       </DialogContent>
       <DialogActions className="dialog-actions">
-        <Button onClick={onClose} type={cancel.type} text={cancel.message} />
-        <Button onClick={onConfirm} type={confirm.type} text={confirm.message} />
+        <Button onClick={onClose} type={cancel.type} text={cancel.message} disabled={cancel.disabled} />
+        <Button onClick={onConfirm} type={confirm.type} text={confirm.message} disabled={confirm.disabled} />
       </DialogActions>
     </MuiDialog>
   )
