@@ -43,13 +43,21 @@ class StripeSvc {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Envolvemos al estilo del wrapper real
+        // TODO: Se puede cambiar la peticion
+        //Response 200
         resolve({
           status_code: 200,
           data: response200,
           error: false
         });
-      }, 2000); // Simulamos 2 segundos en responder
+
+        // Response 500
+        // resolve({
+        //   error: true,
+        //   code: 500,
+        //   messages: "Error simulado: No se pudo cancelar la suscripción en Stripe."
+        // });
+      }, 2000);
     });
   }
 }

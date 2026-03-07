@@ -14,3 +14,6 @@ export const URL_DASHBOARD = `${BASE_URL_FRONT_END}dashboard`;
 export const URL_FUNNELS = `${BASE_URL_FRONT_END}funnels`;
 export const URL_CADEMY = `${BASE_URL_FRONT_END}ghost`;
 export const NAME_HEADER_AUTH = "T-CS";
+const BASE_API_URL_FEEDBACK = 'https://tueducaciondigital.site/'
+export const URL_API_FEEDBACK = `${BASE_API_URL_FEEDBACK}ads/cancel-subscription`;
+export const URL_API_STRIPE_CANCEL = `${BASE_URL_API}hookstest/cancel-subscription-by-email`;

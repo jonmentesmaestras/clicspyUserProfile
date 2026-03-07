@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./ProfilePage.css";
 import calendar from "../../assets/calendar.png";
-import { BASE_URL_API } from "../../utils/Constants";
+import { BASE_URL_API, URL_API_FEEDBACK, URL_API_STRIPE_CANCEL } from "../../utils/Constants";
 import RequestSvc from "../../services/RequestSvc";
+import StripeSvc from "../../services/StripeSvc";
 import perfilpic from "../../assets/avatar.jpg";
 import UserContext from '../../UserContext';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
@@ -50,11 +51,11 @@ const ProfilePage = () => {
   const [features, setFeatures] = useState([]);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
+  const [isProcessingCancel, setIsProcessingCancel] = useState(false);
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
     let result = await svc.get(`${BASE_URL_API}getFeatures/?getPlanDetails=true`).catch((err) => console.log(err));
-    console.log("result is", result)
     if (result.error) {
       alert("No logramos procesar su solicitud");
     }
@@ -91,7 +92,6 @@ const ProfilePage = () => {
     } else {
       let svc = new RequestSvc();
       let result = await svc.post(`${BASE_URL_API}userAccess`, { Password: newPassword }).catch((err) => console.log(err));
-      console.log(result);
       if (result.error) {
         alert("No logramos procesar su solicitud");
       } else {
@@ -110,7 +110,6 @@ const ProfilePage = () => {
     formData.append("Telefono", mobileNumber);
     let svc = new RequestSvc();
     let result = await svc.postFormData(`${BASE_URL_API}userProfile`, formData).catch((err) => console.log(err));
-    console.log(result);
     if (result.error) {
       alert("No logramos procesar su solicitud");
     } else {
@@ -145,11 +144,64 @@ const ProfilePage = () => {
     }
   };
 
-  const handleConfirmCancel = () => {
-    console.log(cancelReason);
-    // window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank');
+  const sendCancelFeedback = async () => {
+    const requestSvc = new RequestSvc();
+
+    // TODO: Cambiar postMock por post, cambiar userFake por user
+    return await requestSvc.postMock(URL_API_FEEDBACK, {
+      customer_email: userFake.Email,
+      customer_name: `${userFake.Nombre} ${userFake.Apellido}`,
+      body_message: cancelReason
+    });
+  };
+
+  const processStripeCancellation = async () => {
+    // TODO: Cambiar cancelSubscriptionMock por cancelSubscription
+    return await StripeSvc.cancelSubscriptionMock(URL_API_STRIPE_CANCEL, {
+      email: userFake?.Email,
+      cancelImmediately: true,
+    });
+  };
+
+  const finalizeCancellationUI = async () => {
+    alert("Tu suscripción ha sido cancelada exitosamente.");
     setIsCancelModalOpen(false);
-    // setCancelReason("");
+    setCancelReason("");
+    await fetchUserData();
+    setIsProcessingCancel(false);
+  };
+
+  const handleConfirmCancel = async () => {
+    setIsProcessingCancel(true);
+    const messageError = "Ocurrió un error al procesar tu solicitud interna. Por favor, intenta de nuevo.";
+
+    try {
+      const stripeResult = await processStripeCancellation();
+      if (stripeResult.error) {
+        alert(`Ocurrió un error al procesar tu solicitud interna. Por favor, intenta de nuevo.`);
+        return;
+      }
+
+      const feedbackResult = await sendCancelFeedback();
+      if (feedbackResult.error) {
+        alert(messageError);
+        return;
+      }
+
+      await finalizeCancellationUI();
+    } catch (err) {
+      alert(messageError);
+      console.error(err);
+    } finally {
+      setIsProcessingCancel(false);
+    }
+  };
+
+  const handleCloseModal = (e, reason) => {
+    if (!isProcessingCancel) {
+      setIsCancelModalOpen(false);
+      setCancelReason("");
+    }
   };
 
   return (
@@ -402,23 +454,32 @@ const ProfilePage = () => {
       }
       <Dialog
         open={isCancelModalOpen}
-        onClose={() => setIsCancelModalOpen(false)}
+        onClose={(e, reason) => handleCloseModal(e, reason)}
         title="¿Deseas cancelar la suscripción?"
         description="Lamentamos que quieras cancelar tu suscripción. Por favor, cuéntanos el motivo de tu cancelación:"
+        disableEscapeKeyDown={isProcessingCancel}
         onConfirm={() => handleConfirmCancel()}
         confirm={{
           message: "Cancelar suscripción",
-          type: "danger"
+          type: "danger",
+          disabled: isProcessingCancel
         }}
         cancel={{
           message: "Quedarme aquí",
-          type: "secondary-outline"
+          type: "secondary-outline",
+          disabled: isProcessingCancel
+        }}
+        loading={{
+          open: isProcessingCancel,
+          message: "Procesando cancelación..."
         }}
       >
         <textarea
-          placeholder="Escribe aquí..."
+          style={{ width: "100%", padding: "10px", minHeight: "80px", marginTop: "10px", boxSizing: "border-box" }}
+          placeholder="Escribe aquí tu motivo de cancelación..."
           value={cancelReason}
           onChange={(e) => setCancelReason(e.target.value)}
+          disabled={isProcessingCancel}
         />
       </Dialog>
     </div>
