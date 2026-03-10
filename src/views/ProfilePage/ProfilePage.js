@@ -156,7 +156,7 @@ const ProfilePage = () => {
 
   const processStripeCancellation = async () => {
     // TODO: Cambiar cancelSubscriptionMock por cancelSubscription
-    return await StripeSvc.cancelSubscriptionMock(URL_API_STRIPE_CANCEL, {
+    return await StripeSvc.cancelSubscription(URL_API_STRIPE_CANCEL, {
       email: user?.Email,
       cancelImmediately: true,
     });
