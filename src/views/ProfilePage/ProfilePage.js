@@ -147,9 +147,9 @@ const ProfilePage = () => {
   const sendCancelFeedback = async () => {
     const requestSvc = new RequestSvc();
 
-    return await requestSvc.postMock(URL_API_FEEDBACK, {
-      customer_email: user.Email,
-      customer_name: `${user.Nombre} ${user.Apellido}`,
+    return await requestSvc.post(URL_API_FEEDBACK, {
+      customer_email: user?.Email,
+      customer_name: `${user?.Nombre} ${user?.Apellido}`,
       body_message: cancelReason
     });
   };
@@ -175,6 +175,7 @@ const ProfilePage = () => {
 
     try {
       const stripeResult = await processStripeCancellation();
+      console.log("stripeResult", stripeResult);
       if (stripeResult.error) {
         alert(`Ocurrió un error al procesar tu solicitud interna. Por favor, intenta de nuevo.`);
         return;
