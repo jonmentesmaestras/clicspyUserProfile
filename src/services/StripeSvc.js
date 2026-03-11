@@ -23,7 +23,7 @@ class StripeSvc {
       const response = await fetch(endpoint, requestOptions);
       const data = await response.json();
 
-      if (response?.success !== true) {
+      if (data?.success !== true) {
         return { error: true, messages: data.msg || data.error || 'Stripe error' };
       }
 
