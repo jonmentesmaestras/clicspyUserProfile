@@ -1,27 +1,29 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./ProfilePage.css";
 import calendar from "../../assets/calendar.png";
-import { BASE_URL_API } from "../../utils/Constants";
+import { BASE_URL_API, URL_API_FEEDBACK, URL_API_STRIPE_CANCEL } from "../../utils/Constants";
 import RequestSvc from "../../services/RequestSvc";
+import StripeSvc from "../../services/StripeSvc";
 import perfilpic from "../../assets/avatar.jpg";
 import UserContext from '../../UserContext';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import Dialog from '../../components/Dialog';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
-  
+
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
   const year = date.getFullYear();
-  
+
   const months = [
     'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
   ];
   const month = months[date.getMonth()];
-  
+
   return `${day}-${month}-${year}`;
 };
 
@@ -30,11 +32,11 @@ function getRandomNumber() {
   return Math.floor(Math.random() * (8000 - 1000 + 1)) + 1000;
 }
 
-const ProfilePage = () => { 
-  
+const ProfilePage = () => {
+
   const { user, fetchUserData, imageVersion, setImageVersion } = useContext(UserContext);
 
-  
+
   const [iDPersona, setIDPersona] = useState("");
   const [planData, setPlanData] = useState({});
   const [firstName, setFirstName] = useState(user?.Nombre || "");
@@ -47,11 +49,13 @@ const ProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [features, setFeatures] = useState([]);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [isProcessingCancel, setIsProcessingCancel] = useState(false);
 
   const getPlanData = async () => {
     let svc = new RequestSvc();
     let result = await svc.get(`${BASE_URL_API}getFeatures/?getPlanDetails=true`).catch((err) => console.log(err));
-    console.log("result is", result)
     if (result.error) {
       alert("No logramos procesar su solicitud");
     }
@@ -88,7 +92,6 @@ const ProfilePage = () => {
     } else {
       let svc = new RequestSvc();
       let result = await svc.post(`${BASE_URL_API}userAccess`, { Password: newPassword }).catch((err) => console.log(err));
-      console.log(result);
       if (result.error) {
         alert("No logramos procesar su solicitud");
       } else {
@@ -107,14 +110,13 @@ const ProfilePage = () => {
     formData.append("Telefono", mobileNumber);
     let svc = new RequestSvc();
     let result = await svc.postFormData(`${BASE_URL_API}userProfile`, formData).catch((err) => console.log(err));
-    console.log(result);
     if (result.error) {
       alert("No logramos procesar su solicitud");
     } else {
-      
+
       await fetchUserData(); // Refresh user data in context
       alert("Your data has been updated");
-      
+
       // Increment the image version
       setImageVersion((prevVersion) => prevVersion + getRandomNumber());
     }
@@ -142,6 +144,64 @@ const ProfilePage = () => {
     }
   };
 
+  const sendCancelFeedback = async () => {
+    const requestSvc = new RequestSvc();
+
+    return await requestSvc.post(URL_API_FEEDBACK, {
+      customer_email: user?.Email,
+      customer_name: `${user?.Nombre} ${user?.Apellido}`,
+      body_message: cancelReason
+    });
+  };
+
+  const processStripeCancellation = async () => {
+    return await StripeSvc.cancelSubscription(URL_API_STRIPE_CANCEL, {
+      email: user?.Email,
+      cancelImmediately: true,
+    });
+  };
+
+  const finalizeCancellationUI = async () => {
+    alert("Tu suscripción ha sido cancelada exitosamente.");
+    setIsCancelModalOpen(false);
+    setCancelReason("");
+    await fetchUserData();
+    setIsProcessingCancel(false);
+  };
+
+  const handleConfirmCancel = async () => {
+    setIsProcessingCancel(true);
+    const messageError = "Ocurrió un error al procesar tu solicitud interna. Por favor, intenta de nuevo.";
+
+    try {
+      const stripeResult = await processStripeCancellation();
+      console.log("stripeResult", stripeResult);
+      if (stripeResult.error) {
+        alert(`Ocurrió un error al procesar tu solicitud interna. Por favor, intenta de nuevo.`);
+        return;
+      }
+
+      const feedbackResult = await sendCancelFeedback();
+      if (feedbackResult.error) {
+        alert(messageError);
+        return;
+      }
+
+      await finalizeCancellationUI();
+    } catch (err) {
+      alert(messageError);
+      console.error(err);
+    } finally {
+      setIsProcessingCancel(false);
+    }
+  };
+
+  const handleCloseModal = (e, reason) => {
+    if (!isProcessingCancel) {
+      setIsCancelModalOpen(false);
+      setCancelReason("");
+    }
+  };
 
   return (
     <div className="ProfilePage">
@@ -151,7 +211,7 @@ const ProfilePage = () => {
           :
           <div className="inner">
             <h3 className="title">Mi cuenta</h3>
-          
+
             <div className="sectionsContainer">
               <section>
                 <div className="perfilSection">
@@ -159,26 +219,26 @@ const ProfilePage = () => {
                     <h4>Mi perfil</h4>
                     <div className="header">
                       <div className="userImg">
-                      <img
-                        src={
-                          selectedFile
-                            ? URL.createObjectURL(selectedFile)
-                            : user?.Foto 
-                            ? `${user.Foto}?v=${getRandomNumber()}`
-                            : perfilpic
-                        }
-                        alt=""
-                      />
+                        <img
+                          src={
+                            selectedFile
+                              ? URL.createObjectURL(selectedFile)
+                              : user?.Foto
+                                ? `${user.Foto}?v=${getRandomNumber()}`
+                                : perfilpic
+                          }
+                          alt=""
+                        />
                       </div>
                       <div className="userButtons">
                         <input type="file" id="profilePicture" name="profilePicture" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                      <label htmlFor="profilePicture" className="uploadBtn">
-                        Cambiar foto
-                      </label>
+                        <label htmlFor="profilePicture" className="uploadBtn">
+                          Cambiar foto
+                        </label>
                         <br />
-                      <button className="secondBtn" onClick={() => setSelectedFile(null)}>
-                        Eliminar foto
-                      </button>
+                        <button className="secondBtn" onClick={() => setSelectedFile(null)}>
+                          Eliminar foto
+                        </button>
                       </div>
                     </div>
                     <div className="perfilForm">
@@ -305,7 +365,7 @@ const ProfilePage = () => {
                   <div className="planDate">
                     <p>
                       Días para Disfrutar la suscripcion: {planData?.DaysLeft}
-                     
+
                     </p>
                     <p>
                       Próximo cobro: {formatDate(planData?.NextDateCharge)}
@@ -316,21 +376,21 @@ const ProfilePage = () => {
                       <Table>
                         <TableHead>
                           <TableRow>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               fontWeight: 'bold'
                             }}>Poderes</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
                             }}>Has Usado</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
                             }}>Límite</TableCell>
-                            <TableCell sx={{ 
+                            <TableCell sx={{
                               fontSize: '16px',
                               textAlign: 'center',
                               fontWeight: 'bold'
@@ -341,20 +401,20 @@ const ProfilePage = () => {
                           {features.map((feature) => (
                             <TableRow key={feature.Usuarios_Features_PlanesID}>
                               <TableCell sx={{ fontSize: '16px' }}>{feature.FK_FeaturePlanCode}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>{feature.TotalUsed}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>{feature.Limite}</TableCell>
-                              <TableCell sx={{ 
+                              <TableCell sx={{
                                 fontSize: '16px',
                                 textAlign: 'center'
                               }}>
-                                {feature.TotalUsed > feature.Limite ? 
-                                  <BlockIcon color="error" /> : 
+                                {feature.TotalUsed > feature.Limite ?
+                                  <BlockIcon color="error" /> :
                                   <CheckCircleOutlineIcon color="success" />
                                 }
                               </TableCell>
@@ -363,7 +423,7 @@ const ProfilePage = () => {
                         </TableBody>
                       </Table>
                     </TableContainer>
-                    
+
                     {features.some(feature => feature.TotalUsed > feature.Limite) && (
                       <div style={{
                         fontWeight: 'bold',
@@ -378,9 +438,10 @@ const ProfilePage = () => {
                   </div>
                   <div className="planBtn" style={{ marginTop: '20%' }}>
                     <button className="blue">Cambiar plan</button>
-                    <button 
-                      className="red" 
-                      onClick={() => window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank')}
+                    <button
+                      className="red"
+                      // onClick={() => window.open('https://help.hotmart.com/es/article/115002183968/-como-cancelar-mi-suscripcion-', '_blank')}
+                      onClick={() => setIsCancelModalOpen(true)}
                     >
                       Cancelar suscripción
                     </button>
@@ -390,6 +451,36 @@ const ProfilePage = () => {
             </div>
           </div>
       }
+      <Dialog
+        open={isCancelModalOpen}
+        onClose={(e, reason) => handleCloseModal(e, reason)}
+        title="¿Deseas cancelar la suscripción?"
+        description="Lamentamos que quieras cancelar tu suscripción. Por favor, cuéntanos el motivo de tu cancelación:"
+        disableEscapeKeyDown={isProcessingCancel}
+        onConfirm={() => handleConfirmCancel()}
+        confirm={{
+          message: "Cancelar suscripción",
+          type: "danger",
+          disabled: isProcessingCancel
+        }}
+        cancel={{
+          message: "Quedarme aquí",
+          type: "secondary-outline",
+          disabled: isProcessingCancel
+        }}
+        loading={{
+          open: isProcessingCancel,
+          message: "Procesando cancelación..."
+        }}
+      >
+        <textarea
+          style={{ width: "100%", padding: "10px", minHeight: "80px", marginTop: "10px", boxSizing: "border-box" }}
+          placeholder="Escribe aquí tu motivo de cancelación..."
+          value={cancelReason}
+          onChange={(e) => setCancelReason(e.target.value)}
+          disabled={isProcessingCancel}
+        />
+      </Dialog>
     </div>
   );
 };
